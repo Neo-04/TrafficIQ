@@ -8,78 +8,78 @@ Bengaluru Event-Driven Traffic Impact dataset
 
 | Column | Dtype |
 |---|---|
-| id | str |
-| event_type | str |
+| id | object |
+| event_type | object |
 | latitude | float64 |
 | longitude | float64 |
 | endlatitude | float64 |
 | endlongitude | float64 |
-| address | str |
-| end_address | str |
-| event_cause | str |
+| address | object |
+| end_address | object |
+| event_cause | object |
 | requires_road_closure | bool |
-| start_datetime | str |
-| end_datetime | str |
-| status | str |
-| authenticated | str |
-| modified_datetime | str |
+| start_datetime | object |
+| end_datetime | object |
+| status | object |
+| authenticated | object |
+| modified_datetime | object |
 | map_file | float64 |
-| direction | str |
-| description | str |
-| veh_type | str |
-| veh_no | str |
-| corridor | str |
-| priority | str |
-| cargo_material | str |
-| reason_breakdown | str |
+| direction | object |
+| description | object |
+| veh_type | object |
+| veh_no | object |
+| corridor | object |
+| priority | object |
+| cargo_material | object |
+| reason_breakdown | object |
 | age_of_truck | float64 |
-| created_date | str |
-| route_path | str |
+| created_date | object |
+| route_path | object |
 | client_id | int64 |
-| created_by_id | str |
-| last_modified_by_id | str |
-| assigned_to_police_id | str |
-| citizen_accident_id | str |
+| created_by_id | object |
+| last_modified_by_id | object |
+| assigned_to_police_id | object |
+| citizen_accident_id | object |
 | comment | float64 |
-| police_station | str |
+| police_station | object |
 | meta_data | float64 |
-| kgid | str |
-| resolved_at_address | str |
+| kgid | object |
+| resolved_at_address | object |
 | resolved_at_latitude | float64 |
 | resolved_at_longitude | float64 |
-| closed_by_id | str |
-| closed_datetime | str |
-| resolved_by_id | str |
-| resolved_datetime | str |
-| gba_identifier | str |
-| zone | str |
-| junction | str |
+| closed_by_id | object |
+| closed_datetime | object |
+| resolved_by_id | object |
+| resolved_datetime | object |
+| gba_identifier | object |
+| zone | object |
+| junction | object |
 
 ## Missing Value Analysis
 | Column | Missing | Missing % | Recommendation |
 |---|---|---|---|
+| meta_data | 8173 | 100.0 | DROP (>90% missing) |
 | comment | 8173 | 100.0 | DROP (>90% missing) |
 | map_file | 8173 | 100.0 | DROP (>90% missing) |
-| meta_data | 8173 | 100.0 | DROP (>90% missing) |
 | direction | 8130 | 99.47 | DROP (>90% missing) |
-| resolved_at_address | 8099 | 99.09 | DROP (>90% missing) |
+| resolved_at_longitude | 8099 | 99.09 | DROP (>90% missing) |
 | resolved_at_latitude | 8099 | 99.09 | DROP (>90% missing) |
+| resolved_at_address | 8099 | 99.09 | DROP (>90% missing) |
 | resolved_by_id | 8099 | 99.09 | DROP (>90% missing) |
 | resolved_datetime | 8099 | 99.09 | DROP (>90% missing) |
-| resolved_at_longitude | 8099 | 99.09 | DROP (>90% missing) |
-| assigned_to_police_id | 8045 | 98.43 | DROP (>90% missing) |
 | citizen_accident_id | 8045 | 98.43 | DROP (>90% missing) |
+| assigned_to_police_id | 8045 | 98.43 | DROP (>90% missing) |
 | route_path | 8036 | 98.32 | DROP (>90% missing) |
+| cargo_material | 7897 | 96.62 | DROP (>90% missing) |
 | age_of_truck | 7897 | 96.62 | DROP (>90% missing) |
 | reason_breakdown | 7897 | 96.62 | DROP (>90% missing) |
-| cargo_material | 7897 | 96.62 | DROP (>90% missing) |
 | end_datetime | 7683 | 94.0 | DROP (>90% missing) |
 | end_address | 7486 | 91.59 | DROP (>90% missing) |
 | junction | 5663 | 69.29 | IMPUTE / use with care |
-| closed_datetime | 5032 | 61.57 | IMPUTE / use with care |
 | closed_by_id | 5032 | 61.57 | IMPUTE / use with care |
-| gba_identifier | 4729 | 57.86 | IMPUTE / use with care |
+| closed_datetime | 5032 | 61.57 | IMPUTE / use with care |
 | zone | 4729 | 57.86 | IMPUTE / use with care |
+| gba_identifier | 4729 | 57.86 | IMPUTE / use with care |
 | veh_no | 3287 | 40.22 | IMPUTE / use with care |
 | veh_type | 3286 | 40.21 | IMPUTE / use with care |
 | description | 1360 | 16.64 | KEEP |
@@ -89,21 +89,21 @@ Bengaluru Event-Driven Traffic Impact dataset
 | corridor | 20 | 0.24 | KEEP |
 | address | 3 | 0.04 | KEEP |
 | last_modified_by_id | 3 | 0.04 | KEEP |
-| priority | 2 | 0.02 | KEEP |
 | created_by_id | 2 | 0.02 | KEEP |
-| authenticated | 0 | 0.0 | KEEP |
-| event_cause | 0 | 0.0 | KEEP |
-| id | 0 | 0.0 | KEEP |
-| longitude | 0 | 0.0 | KEEP |
+| priority | 2 | 0.02 | KEEP |
 | latitude | 0 | 0.0 | KEEP |
-| event_type | 0 | 0.0 | KEEP |
-| status | 0 | 0.0 | KEEP |
-| start_datetime | 0 | 0.0 | KEEP |
+| longitude | 0 | 0.0 | KEEP |
 | requires_road_closure | 0 | 0.0 | KEEP |
+| event_cause | 0 | 0.0 | KEEP |
+| police_station | 0 | 0.0 | KEEP |
+| start_datetime | 0 | 0.0 | KEEP |
+| status | 0 | 0.0 | KEEP |
 | client_id | 0 | 0.0 | KEEP |
+| authenticated | 0 | 0.0 | KEEP |
 | created_date | 0 | 0.0 | KEEP |
 | modified_datetime | 0 | 0.0 | KEEP |
-| police_station | 0 | 0.0 | KEEP |
+| event_type | 0 | 0.0 | KEEP |
+| id | 0 | 0.0 | KEEP |
 
 ## Categorical Feature Analysis
 
@@ -150,8 +150,8 @@ Bengaluru Event-Driven Traffic Impact dataset
 | Yelahanka | 377 |
 | HAL Old Airport | 361 |
 | Sadashivanagar | 302 |
-| Byatarayanapura | 297 |
 | Halasuru Gate | 297 |
+| Byatarayanapura | 297 |
 | Yeshwanthpura | 280 |
 | Hennuru | 276 |
 | Kodigehalli | 272 |
@@ -166,8 +166,8 @@ Bengaluru Event-Driven Traffic Impact dataset
 | SatteliteBusStandJunc | 43 |
 | YeshwanthpuraCircle | 38 |
 | YelhankaCircle | 34 |
-| SilkBoardJunc | 33 |
 | toll gate mysore road | 33 |
+| SilkBoardJunc | 33 |
 
 ### corridor  (unique = 22)
 
@@ -300,8 +300,8 @@ Bengaluru Event-Driven Traffic Impact dataset
 | SatteliteBusStandJunc | 43 |
 | YeshwanthpuraCircle | 38 |
 | YelhankaCircle | 34 |
-| SilkBoardJunc | 33 |
 | toll gate mysore road | 33 |
+| SilkBoardJunc | 33 |
 | JalahalliCross(SM Circle) | 32 |
 | Nagavara-ORR Junction | 32 |
 | K R Circle | 31 |
@@ -313,8 +313,8 @@ Bengaluru Event-Driven Traffic Impact dataset
 | Yelahanka | 377 |
 | HAL Old Airport | 361 |
 | Sadashivanagar | 302 |
-| Byatarayanapura | 297 |
 | Halasuru Gate | 297 |
+| Byatarayanapura | 297 |
 | Yeshwanthpura | 280 |
 | Hennuru | 276 |
 | Kodigehalli | 272 |
@@ -362,6 +362,6 @@ Correlation between key engineered signals:
 | dow | -0.02 | 0.00 | 0.00 | -0.01 | -0.02 | -0.13 | 1.00 |
 
 ## Phase 1 Deliverables Summary
-- **Drop candidates (>90% missing):** comment, map_file, meta_data, direction, resolved_at_address, resolved_at_latitude, resolved_by_id, resolved_datetime, resolved_at_longitude, assigned_to_police_id, citizen_accident_id, route_path, age_of_truck, reason_breakdown, cargo_material, end_datetime, end_address
+- **Drop candidates (>90% missing):** meta_data, comment, map_file, direction, resolved_at_longitude, resolved_at_latitude, resolved_at_address, resolved_by_id, resolved_datetime, citizen_accident_id, assigned_to_police_id, route_path, cargo_material, age_of_truck, reason_breakdown, end_datetime, end_address
 - **Key data-quality issues:** end_datetime ~94% missing and contains future-dated garbage; resolution_time only available for the ~38% of rows that have closed_datetime; dataset is dominated by unplanned vehicle_breakdown events; road_closure target is imbalanced (~8% positive).
 - **Strong columns to keep:** event_cause, corridor, police_station, priority, requires_road_closure, start_datetime, latitude/longitude.

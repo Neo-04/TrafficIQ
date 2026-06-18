@@ -10,7 +10,7 @@ reports/severity_removal_rationale.md): severity turned out to be an
 administrative location label, not a learnable outcome. Severity is now a
 rule derived from the predicted resolution class (see rules_engine.py).
 
-Models compared (no ensembling, no AutoML): XGBoost, LightGBM, CatBoost.
+Models compared (no ensembling, no AutoML): XGBoost, LightGBM, CatBoost. 
 Selection rule: highest weighted F1, tie-break weighted Recall.
 
 Reads : data/processed/incidents_modeling.csv

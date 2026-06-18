@@ -26,6 +26,7 @@ TEST_SIZE = 0.20
 CV_SPLITS = 5
 
 # ---- Phase 4: rule-based layers (replace the removed severity model) ----
+# ---- Phase 4: rule-based layers ----
 IMPACT_SCORE_MAP = {"Quick": 30, "Moderate": 60, "Prolonged": 90}
 RESOLUTION_TO_SEVERITY = {"Quick": "Low", "Moderate": "Medium", "Prolonged": "High"}
 RESOURCE_RULES = {
@@ -89,5 +90,5 @@ LOCATION_RISK_WEIGHTS = {
 }
 MIN_INCIDENTS_FOR_RISK = 10            # ignore locations with too few incidents
 # Catch-all / non-real location buckets to exclude from the risk index.
-EXCLUDE_LOCATIONS = ["Non-corridor"]
+EXCLUDE_LOCATIONS = ["Non-corridor"] 
 RISK_BAND_LABELS = ["Low", "Medium", "High", "Critical"]   # quartile bands

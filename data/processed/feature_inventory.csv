@@ -3,10 +3,10 @@ latitude,float64,0.0,8014
 longitude,float64,0.0,7993
 endlatitude,float64,2.1,685
 endlongitude,float64,2.1,685
-event_cause,str,0.0,17
-corridor,str,0.2,22
-police_station,str,0.0,54
-junction,str,69.3,294
+event_cause,object,0.0,17
+corridor,object,0.2,22
+police_station,object,0.0,54
+junction,object,69.3,294
 hour,float64,1.4,24
 day_of_week,float64,1.4,7
 month,float64,1.4,6
