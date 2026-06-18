@@ -1,131 +1,313 @@
-# TrafficIQ — AI-Powered Event-Driven Traffic Impact Forecasting & Response Planning
+# 🚦 TrafficIQ — AI-Powered Traffic Intelligence Platform
 
-TrafficIQ forecasts how long a reported Bengaluru traffic incident will take to
-clear, then translates that forecast into an impact score, a severity level, and
-a recommended on-ground deployment — so operators can plan a response before
-congestion builds. It is built on ~8,173 real Bengaluru traffic-incident records.
+TrafficIQ is a full-stack, AI-driven traffic intelligence platform designed to forecast traffic incident resolution times and convert those predictions into actionable operational insights. Built using real-world Bengaluru traffic incident data (~8,173 records), the platform helps city operators proactively manage congestion through predictive analytics, geospatial visualization, and automated resource planning.
 
-## System architecture
+---
 
+## 📌 Overview
+
+Traditional traffic dashboards often display incidents after they occur. TrafficIQ takes a predictive approach by estimating how long an incident will impact traffic and automatically recommending response strategies.
+
+The system combines:
+
+* Machine Learning-based resolution time forecasting
+* Rule-based severity and impact assessment
+* Interactive geospatial visualization
+* Tactical resource deployment recommendations
+* Feedback mechanisms for continuous improvement
+
+---
+
+## 🏗️ System Architecture
+
+```text
+[ React Frontend / Leaflet Map ]
+         | (JSON over HTTP/POST)
+[ FastAPI Orchestrator (main.py) ]
+         |
+[ Feature Assembly & Payload Mapping ]
+         |
+[ LightGBM Resolution-Time Model ]
+         |
+[ Predicted Class:
+   Quick / Moderate / Prolonged ]
+         |
+[ Rules Engine Layer ]
+    ├── Impact Score
+    ├── Severity Level
+    └── Resource Allocation
+         |
+[ JSON Response Payload ]
+         |
+[ React Dashboard Update ]
 ```
-User inputs (event cause, corridor, time, vehicle type)
-        |
-   Feature assembly
-        |
-   LightGBM resolution-time model      <-- the ONLY machine-learning model
-        |
-   Predicted class: Quick / Moderate / Prolonged
-        |
-   Impact score (rule)        -> 30 / 60 / 90
-        |
-   Derived severity (rule)    -> Low / Medium / High
-        |
-   Resource recommendation (rule) -> officers, barricades, marshals, tow trucks
-        |
-   Final traffic response plan
+
+### Architecture Highlights
+
+* Decoupled frontend and backend
+* RESTful communication via FastAPI
+* Single production-grade ML model
+* Explainable rule-engine layer
+* Real-time UI updates using React state management
+
+---
+
+## ✨ Features
+
+### 🗺️ Real-Time Traffic Visualization
+
+Interactive city-wide traffic dashboard built using React-Leaflet and Leaflet.js.
+
+### 🚨 Dynamic Severity Mapping
+
+Traffic incidents are color-coded based on predicted impact:
+
+| Severity | Color     |
+| -------- | --------- |
+| Low      | 🟢 Green  |
+| Medium   | 🟡 Yellow |
+| High     | 🔴 Red    |
+
+Map markers dynamically scale according to forecasted disruption levels.
+
+### 🚓 Tactical Resource Deployment
+
+Automatically recommends:
+
+* Traffic officers
+* Tow trucks
+* Marshals
+* Barricade deployment
+* Alternate route suggestions
+
+based on predicted incident severity.
+
+### 🔄 Continuous Learning Hook
+
+Operators can validate model predictions and provide feedback for future active-learning workflows.
+
+### 🎤 Presentation Mode
+
+Special backend interception layer enables deterministic demo scenarios while preserving the original ML model behavior.
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React.js (Vite)
+* Tailwind CSS
+* React-Leaflet
+* Leaflet.js
+
+### Backend
+
+* FastAPI
+* Uvicorn
+* Python 3
+
+### Machine Learning
+
+* LightGBM
+* Scikit-Learn
+* Pandas
+
+### Data Processing
+
+* Feature Engineering Pipeline
+* Custom Rules Engine
+* Model Serialization (.pkl)
+
+---
+
+## 🤖 Machine Learning Pipeline
+
+### Prediction Task
+
+TrafficIQ performs a single ML task:
+
+**Resolution Time Classification**
+
+Target Variable:
+
+```text
+res_time_band
+
+Classes:
+- Quick
+- Moderate
+- Prolonged
 ```
 
-There is exactly one ML model. The impact score, severity, and resource layers
-are transparent, editable rules layered on top of the prediction.
+### Model Selection
 
-## What's completed
+Multiple gradient boosting algorithms were evaluated:
 
-Data cleaning, EDA, feature engineering, target creation, leakage analysis,
-model training and selection, severity investigation and removal, the three rule
-engines (impact / severity / resources), and a local Streamlit dashboard.
+* XGBoost
+* CatBoost
+* LightGBM
 
-## Model findings
+LightGBM was selected for deployment due to the best overall balance between weighted F1-score and recall.
 
-**Resolution-time classification** is the only ML task. Target `res_time_band`
-with classes Quick / Moderate / Prolonged. XGBoost, LightGBM and CatBoost were
-compared; **LightGBM** was selected (best weighted F1, tie-broken on recall).
+### Performance Metrics
 
-```
-Accuracy   = 0.5849
+```text
+Accuracy    = 0.5849
 Weighted F1 = 0.5920
-CV F1      = 0.5603 ± 0.0152
+CV F1       = 0.5603 ± 0.0152
 ```
 
-This is genuine signal on a hard 3-class problem (well above the ~0.38 you'd get
-by guessing). Top drivers are event-cause, location, and time features.
+---
 
-## Why severity is a rule, not a model
+## 📖 Model Interpretability
 
-A severity classifier initially scored ~99.8% F1 — too high to be real.
-Investigation showed severity is almost entirely determined by **location
-identity**: nearly every monitored corridor is labelled High and nearly every
-non-corridor location is labelled Low, so the model was just memorising a
-location→severity lookup. Removing location identity collapsed severity
-prediction to ~59% F1, *below* the majority-class baseline — i.e. no genuine
-incident-level signal.
+### Why Severity is Rule-Based
 
-Conclusion: severity here is an administrative location label, not a learnable
-outcome. The severity model was intentionally removed and severity is now
-**derived from the predicted resolution class** via transparent rules. This
-improves interpretability and trustworthiness and avoids an inflated, misleading
-accuracy claim. (Full write-up: `reports/severity_removal_rationale.md`.)
+During experimentation, a separate severity classification model achieved nearly 99.8% F1 score.
 
-## The rule layers
+Further investigation revealed that the model was primarily memorizing location identifiers rather than learning meaningful traffic behavior patterns.
 
-- **Impact score** — maps the predicted class to a 0–100 score (Quick 30,
-  Moderate 60, Prolonged 90).
-- **Severity** — derived from the predicted class (Quick→Low, Moderate→Medium,
-  Prolonged→High).
-- **Resource recommendation** — officers, barricades, marshals and tow trucks by
-  severity, with a cause-based rule that guarantees a tow truck for breakdowns
-  and accidents.
+To preserve:
 
-All thresholds live in `src/config.py`
-(`IMPACT_SCORE_MAP`, `RESOLUTION_TO_SEVERITY`, `RESOURCE_RULES`,
-`TOW_TRUCK_CAUSES`). Change them and re-run — no retraining needed.
+* Explainability
+* Trustworthiness
+* Operational transparency
 
-## How to run
+the severity model was intentionally removed.
 
-Install dependencies first:
+Severity is now derived from the resolution-time prediction using a transparent rules engine.
+
+```text
+Resolution Forecast
+        ↓
+Impact Score
+        ↓
+Severity Level
+        ↓
+Resource Recommendations
+```
+
+This design provides better interpretability and avoids misleading performance metrics.
+
+---
+
+##  Running Locally
+
+### 1️⃣ Start the Backend
+
+From the project root:
 
 ```bash
 pip install -r requirements.txt
+
+uvicorn main:app --reload
 ```
 
-Reproduce the data + model pipeline (in order):
+Backend runs on:
+
+```text
+http://localhost:8000
+```
+
+---
+
+### 2️⃣ Start the Frontend
+
+Open a second terminal:
 
 ```bash
-python src/eda.py                  # data understanding
-python src/feature_engineering.py  # features
-python src/define_targets.py       # targets + location risk index
-python src/train_models.py         # trains/compares, saves LightGBM model
-python src/predict_pipeline.py     # end-to-end prediction demo (console)
+cd client
+
+npm install
+
+npm run dev
 ```
 
-Launch the dashboard:
+Frontend runs on:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## 🔬 Reproducing the ML Pipeline
+
+To retrain the model from scratch:
 
 ```bash
-streamlit run src/app.py
+python src/eda.py
+
+python src/feature_engineering.py
+
+python src/define_targets.py
+
+python src/train_models.py
 ```
 
-It opens at `http://localhost:8501`.
+Pipeline Flow:
 
-## Dashboard (TrafficIQ)
+```text
+Raw Dataset
+    ↓
+EDA
+    ↓
+Feature Engineering
+    ↓
+Target Definition
+    ↓
+Model Training
+    ↓
+Serialized Model Artifacts
+```
 
-A local Streamlit app (no backend, API, database, or map). The sidebar takes
-Event Cause, Corridor, Vehicle Type (all populated from the training values),
-an Incident Hour slider, and Day of Week, plus a **Forecast Traffic Impact**
-button. On click it runs the LightGBM model through the existing pipeline and
-shows four KPI cards (Resolution Class, Impact Score, Severity, Recommended
-Resources) and a readable Incident Response Summary.
+---
 
-The dashboard reads `data/processed/incidents_modeling.csv` at startup to
-populate dropdowns and rebuild the pipeline lookups, so keep that file in place.
+## 📂 Project Structure
 
-## Reusable components
+```text
+TrafficIQ/
+│
+├── client/                  # React frontend
+│
+├── src/
+│   ├── eda.py
+│   ├── feature_engineering.py
+│   ├── define_targets.py
+│   ├── train_models.py
+│   └── rules_engine.py
+│
+├── models/                  # Serialized ML artifacts
+│
+├── data/
+│   ├── raw/
+│   └── processed/
+│
+├── main.py                  # FastAPI backend
+├── config.py                # Configurations & thresholds
+├── requirements.txt
+│
+└── README.md
+```
 
-- `predict_pipeline.py` — `TrafficImpactPipeline`: loads the model and produces
-  an end-to-end prediction from raw inputs. (This is the "predictor".)
-- `rules_engine.py` — the impact / severity / resource functions.
-  (This is the "recommendation engine".)
-- `app.py` — the Streamlit UI, which imports and reuses both unchanged.
+---
 
-## Scope
+## 🎯 Future Enhancements
 
-This phase intentionally stops at the dashboard. No deployment, API, database,
-authentication, or maps — those are future work.
+* Live traffic API integration
+* SHAP-based model explainability dashboard
+* Real-time streaming predictions
+* Automated model retraining pipeline
+* Docker & Kubernetes deployment
+* MLOps monitoring and drift detection
+
+---
+
+## 📜 License
+
+This project is intended for educational, research, and portfolio purposes.
+
+---
+
+
