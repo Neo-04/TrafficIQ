@@ -91,47 +91,51 @@ export default function App() {
     try {
       // 1. Data mapping so ML pipeline understands the UI strings
       const causeMap = {
-        "Breakdown": "vehicle_breakdown",
-        "Accident": "accident", 
-        "Waterlogging": "water_logging",
+        Breakdown: "vehicle_breakdown",
+        Accident: "accident",
+        Waterlogging: "water_logging",
         "Road Work": "construction",
-        "VIP Movement": "vip_movement"
+        "VIP Movement": "vip_movement",
       };
 
       const vehicleMap = {
         "Two Wheeler": "unknown",
         "Four Wheeler": "private_car",
         "Heavy Commercial Vehicle": "heavy_vehicle",
-        "Bus": "bmtc_bus"
+        Bus: "bmtc_bus",
       };
 
       const corridorMap = {
         "Outer Ring Road (Silk Board to Marathahalli)": "ORR East 1",
         "Bellary Road (Hebbal to Airport)": "Bellary Road 1",
-        "Electronic City Flyover": "Hosur Road", 
+        "Electronic City Flyover": "Hosur Road",
         "Tumkur Road": "Tumkur Road",
         "Old Madras Road": "Old Madras Road",
         "Hosur Road": "Hosur Road",
         "Mysore Road (Kengeri to Nayandahalli)": "Mysore Road",
-        "Bannerghatta Road (Dairy Circle to Meenakshi Mall)": "Bannerghatta Road",
+        "Bannerghatta Road (Dairy Circle to Meenakshi Mall)":
+          "Bannerghatta Road",
         "Inner Ring Road (Domlur to Koramangala)": "Inner Ring Road",
         "Sarjapur Road (Koramangala to Carmelaram)": "Sarjapur Road",
-        "Whitefield Main Road (Marathahalli to Hope Farm)": "Whitefield", 
+        "Whitefield Main Road (Marathahalli to Hope Farm)": "Whitefield",
         "Old Airport Road (Domlur to Marathahalli)": "Old Airport Road",
         "Kanakapura Road (Banashankari to NICE Road)": "Kanakapura Road",
         "Hennur Main Road (Lingarajapuram to Hennur Cross)": "Hennur Main Road",
-        "West of Chord Road (Rajajinagar to Yeshwanthpur)": "West of Chord Road"
+        "West of Chord Road (Rajajinagar to Yeshwanthpur)":
+          "West of Chord Road",
       };
 
       const apiPayload = {
         ...formData,
         cause: causeMap[formData.cause] || formData.cause,
-        vehicle_type: vehicleMap[formData.vehicle_type] || formData.vehicle_type,
-        corridor: corridorMap[formData.corridor] || formData.corridor
+        vehicle_type:
+          vehicleMap[formData.vehicle_type] || formData.vehicle_type,
+        corridor: corridorMap[formData.corridor] || formData.corridor,
       };
 
-      // 2. Fetch with mapped payload (Updated port to 8000 to match main.py)
-      const res = await fetch("http://localhost:8000/predict", {
+      // 2. Send to the Node orchestrator (which calls the FastAPI ML service)
+      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
+      const res = await fetch(`${API_BASE}/api/traffic-incident`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(apiPayload),
@@ -141,16 +145,20 @@ export default function App() {
 
       if (!res.ok) {
         console.error("Backend Error Details:", responseData);
-        throw new Error(responseData.error?.detail || responseData.error || "Backend connection failed.");
+        throw new Error(
+          responseData.error?.detail ||
+            responseData.error ||
+            "Backend connection failed.",
+        );
       }
 
       if (responseData.status === "success") {
         setResults(responseData);
         if (responseData.geo_context?.coordinates) {
-            setMapCenter([
+          setMapCenter([
             responseData.geo_context.coordinates.lat,
             responseData.geo_context.coordinates.lng,
-            ]);
+          ]);
         }
       } else {
         setError(responseData.error || "Prediction failed.");
