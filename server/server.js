@@ -8,7 +8,7 @@ const csv = require('csv-parser');
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -17,7 +17,7 @@ app.use(cors({
 
 app.use(express.json());
 
-const PYTHON_API_URL = 'http://127.0.0.1:8000/predict';
+const PYTHON_API_URL = process.env.PYTHON_API_URL || "http://127.0.0.1:8000/predict";
 // Path tracking back out to your global dataset file location
 const CSV_DATA_PATH = path.join(__dirname, '../data/processed/incidents_modeling.csv');
 
@@ -99,7 +99,7 @@ app.post('/api/traffic-incident', async (req, res) => {
   }
 });
 
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Node.js routing engine active on port ${PORT}`);
 });
