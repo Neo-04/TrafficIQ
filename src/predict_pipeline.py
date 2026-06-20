@@ -105,7 +105,8 @@ class TrafficImpactPipeline:
             row["veh_unknown"] = 1
 
         x = np.array([[float(row[f]) for f in self.features]])
-        cls_idx = int(self.model.predict(x)[0])
+        preds = self.model.predict(x)
+        cls_idx = int(np.argmax(preds[0]))
         resolution_class = self.res_enc.inverse_transform([cls_idx])[0]
 
         response = rules_engine.build_response(resolution_class, event_cause=event_cause)
