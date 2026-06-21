@@ -32,6 +32,10 @@ class PredictionRequest(BaseModel):
     hour: int
     day_of_week: str
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/predict")
 def get_prediction(req: PredictionRequest):
     if pipeline is None:
